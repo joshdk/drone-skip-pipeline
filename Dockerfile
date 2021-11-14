@@ -13,7 +13,9 @@ RUN apk add --no-cache \
 # The builder build stage compiles the Go code into a static binary.
 FROM golang:1.16-alpine as builder
 
-ARG VERSION=development
+ARG CREATED
+ARG REVISION
+ARG VERSION
 
 WORKDIR /go/src/github.com/joshdk/drone-skip-pipeline
 
@@ -21,7 +23,11 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
     -o /bin/drone-skip-pipeline \
-    -ldflags "-s -w" \
+    -ldflags "-s -w \
+      -X 'jdk.sh/meta.date=$CREATED' \
+      -X 'jdk.sh/meta.sha=$REVISION' \
+      -X 'jdk.sh/meta.version=$VERSION' \
+    " \
     -trimpath \
     main.go
 
