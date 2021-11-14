@@ -6,11 +6,15 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"log"
+	"net/http"
 	"os"
 
+	"github.com/google/go-github/v40/github"
 	"github.com/kelseyhightower/envconfig"
+	"golang.org/x/oauth2"
 	"jdk.sh/meta"
 )
 
@@ -24,7 +28,27 @@ func main() {
 func mainCmd() error {
 	log.Printf("joshdk/drone-skip-pipeline %s (%s)\n", meta.Version(), meta.ShortSHA())
 
-	_, err := loadConfig()
+	cfg, err := loadConfig()
+	if err != nil {
+		return err
+	}
+
+	ctx := context.Background()
+
+	// Create a new Github API client, with an optional access token.
+	var httpClient *http.Client
+	if cfg.GithubToken != "" {
+		httpClient = oauth2.NewClient(ctx,
+			oauth2.StaticTokenSource(
+				&oauth2.Token{AccessToken: cfg.GithubToken},
+			),
+		)
+	}
+	client := github.NewClient(httpClient)
+
+	// Get a list of all files (added, deleted, modified) that are a part of
+	// the current pull request.
+	_, _, err = client.PullRequests.ListFiles(ctx, cfg.RepoOwner, cfg.RepoName, cfg.PullRequest, nil)
 	if err != nil {
 		return err
 	}
