@@ -1,4 +1,4 @@
-jdk.sh/meta v0.1.0 h1:BTDH9cL/el15OSZWRcnbdOzynyr7hlRlYrTSJCrcKbo=
-jdk.sh/meta v0.1.0/go.mod h1:c2+wWgMZejSQ2nXsbxNVKLLQgTLY4yrX7TH6NIaQle0=
+github.com/kelseyhightower/envconfig v1.4.0 h1:Im6hONhd3pLkfDFsbRgu68RDNkGF1r3dvMUtDTo2cv8=
+github.com/kelseyhightower/envconfig v1.4.0/go.mod h1:cccZRl6mQpaq41TPp5QxidR+Sa3axMbJDNb//FQX6Gg=
 jdk.sh/meta v0.1.1-0.20211021015548-cff3b930ebd9 h1:f9CEE/IWIjsG3jBxNc/rfJ17031Oe7ghTWkPg6JJ6Bo=
 jdk.sh/meta v0.1.1-0.20211021015548-cff3b930ebd9/go.mod h1:c2+wWgMZejSQ2nXsbxNVKLLQgTLY4yrX7TH6NIaQle0=
