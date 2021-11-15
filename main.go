@@ -19,8 +19,25 @@ import (
 	"jdk.sh/meta"
 )
 
+// exitCodeDroneSkipPipeline is a special exit code that can be returned by a
+// step to indicate that the rest of the pipeline should be skipped.
+// See https://github.com/drone/drone-runtime/issues/51.
+// See https://discourse.drone.io/t/how-to-exit-a-pipeline-early-without-failing/3951.
+const exitCodeDroneSkipPipeline = 78
+
+// errDroneSkipPipeline is a sentinel error indicating that the rest of the
+// current pipeline should be skipped.
+var errDroneSkipPipeline = errors.New("skipping pipeline")
+
 func main() {
-	if err := mainCmd(); err != nil {
+	switch err := mainCmd(); err {
+	case nil:
+		log.Println("continuing pipeline")
+		return
+	case errDroneSkipPipeline:
+		log.Println("skipping pipeline")
+		os.Exit(exitCodeDroneSkipPipeline)
+	default:
 		log.Println("joshdk/drone-skip-pipeline:", err)
 		os.Exit(1)
 	}
@@ -58,20 +75,30 @@ func mainCmd() error {
 
 	// Examine every file in the current pull request, and try to match it
 	// against the set of configured plugin rules.
+	skip := true
 	for _, commitFile := range commitFiles {
 		filename := commitFile.GetFilename()
 		if matched, how := matcher.MatchesPathHow(filename); matched {
 			// File was matched by a rule.
-			log.Printf("%s matched by rule %q\n", filename, how.Line)
+			log.Printf("file %s matched by rule %q\n", filename, how.Line)
+			skip = false
 		} else if how != nil {
 			// File was matched by a rule, but then negated by another.
-			log.Printf("%s not matched by negated rule %q\n", filename, how.Line)
+			log.Printf("file %s not matched by negated rule %q\n", filename, how.Line)
 		} else {
 			// File was not matched by any rules.
-			log.Printf("%s not matched by any rule\n", filename)
+			log.Printf("file %s not matched by any rule\n", filename)
 		}
 	}
 
+	// No files were matched by any of the plugin rules. Skip the rest of the
+	// pipeline.
+	if skip {
+		return errDroneSkipPipeline
+	}
+
+	// At least one file matched the plugin rules, and the pipeline should be
+	// continued as normal.
 	return nil
 }
 
