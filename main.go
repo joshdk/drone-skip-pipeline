@@ -30,9 +30,10 @@ const exitCodeDroneSkipPipeline = 78
 var errDroneSkipPipeline = errors.New("skipping pipeline")
 
 func main() {
-	switch err := mainCmd(); err {
+	switch err := mainCmd(); err { // nolint:errorlint
 	case nil:
 		log.Println("continuing pipeline")
+
 		return
 	case errDroneSkipPipeline:
 		log.Println("skipping pipeline")
@@ -58,10 +59,11 @@ func mainCmd() error {
 	if cfg.GithubToken != "" {
 		httpClient = oauth2.NewClient(ctx,
 			oauth2.StaticTokenSource(
-				&oauth2.Token{AccessToken: cfg.GithubToken},
+				&oauth2.Token{AccessToken: cfg.GithubToken}, // nolint:exhaustivestruct
 			),
 		)
 	}
+
 	client := github.NewClient(httpClient)
 
 	// Get a list of all files (added, deleted, modified) that are a part of
@@ -73,15 +75,15 @@ func mainCmd() error {
 
 	matcher := ignore.CompileIgnoreLines(cfg.Rules...)
 
+	skip := true
 	// Examine every file in the current pull request, and try to match it
 	// against the set of configured plugin rules.
-	skip := true
 	for _, commitFile := range commitFiles {
 		filename := commitFile.GetFilename()
-		if matched, how := matcher.MatchesPathHow(filename); matched {
+		if matched, how := matcher.MatchesPathHow(filename); matched { // nolint:gocritic
+			skip = false
 			// File was matched by a rule.
 			log.Printf("file %s matched by rule %q\n", filename, how.Line)
-			skip = false
 		} else if how != nil {
 			// File was matched by a rule, but then negated by another.
 			log.Printf("file %s not matched by negated rule %q\n", filename, how.Line)
@@ -112,8 +114,8 @@ type config struct {
 }
 
 func loadConfig() (*config, error) {
-	// Load plugin configuration from current working environment.
 	var cfg config
+	// Load plugin configuration from current working environment.
 	err := envconfig.Process("", &cfg)
 	if err != nil {
 		return nil, err
