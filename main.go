@@ -14,6 +14,7 @@ import (
 
 	"github.com/google/go-github/v40/github"
 	"github.com/kelseyhightower/envconfig"
+	ignore "github.com/sabhiram/go-gitignore"
 	"golang.org/x/oauth2"
 	"jdk.sh/meta"
 )
@@ -48,9 +49,27 @@ func mainCmd() error {
 
 	// Get a list of all files (added, deleted, modified) that are a part of
 	// the current pull request.
-	_, _, err = client.PullRequests.ListFiles(ctx, cfg.RepoOwner, cfg.RepoName, cfg.PullRequest, nil)
+	commitFiles, _, err := client.PullRequests.ListFiles(ctx, cfg.RepoOwner, cfg.RepoName, cfg.PullRequest, nil)
 	if err != nil {
 		return err
+	}
+
+	matcher := ignore.CompileIgnoreLines(cfg.Rules...)
+
+	// Examine every file in the current pull request, and try to match it
+	// against the set of configured plugin rules.
+	for _, commitFile := range commitFiles {
+		filename := commitFile.GetFilename()
+		if matched, how := matcher.MatchesPathHow(filename); matched {
+			// File was matched by a rule.
+			log.Printf("%s matched by rule %q\n", filename, how.Line)
+		} else if how != nil {
+			// File was matched by a rule, but then negated by another.
+			log.Printf("%s not matched by negated rule %q\n", filename, how.Line)
+		} else {
+			// File was not matched by any rules.
+			log.Printf("%s not matched by any rule\n", filename)
+		}
 	}
 
 	return nil
