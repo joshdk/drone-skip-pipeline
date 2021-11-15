@@ -1,0 +1,8 @@
+linters:
+  enable-all: true
+  disable:
+    - goerr113
+    - wrapcheck
+
+issues:
+  exclude-use-default: false
