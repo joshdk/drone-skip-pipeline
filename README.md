@@ -19,7 +19,7 @@ This plugin can be added to your `.drone.yml` as a new step within an existing p
 ```yaml
 steps:
 - name: debug
-  image: ghcr.io/joshdk/drone-skip-pipeline:v0.1.0
+  image: ghcr.io/joshdk/drone-skip-pipeline:v0.2.0
   settings:
     rules:
     - package.json
@@ -31,7 +31,7 @@ If your repository is private, a `GITHUB_TOKEN` environment variable must also b
 ```yaml
 steps:
 - name: drone-skip-pipeline
-  image: ghcr.io/joshdk/drone-skip-pipeline:v0.1.0
+  image: ghcr.io/joshdk/drone-skip-pipeline:v0.2.0
   ...
   environment:
     GITHUB_TOKEN:
@@ -55,12 +55,16 @@ clone:
 ```
 
 In order to provide some level of feature parity for older versions of DroneCI that do not support pipeline skipping, you can configure the `touch` setting with a filename that will be created in the event that the pipeline should be skipped.
+
 The existence of file can then be checked for in subsequent steps, where commands can then be skipped where appropriate.
+
+You may also need to configure the `failure` property, in order to ignore the non-zero exit code.
 
 ```yaml
 steps:
 - name: debug
-  image: ghcr.io/joshdk/drone-skip-pipeline:v0.1.0
+  image: ghcr.io/joshdk/drone-skip-pipeline:v0.2.0
+  failure: ignore
   settings:
     rules:
     - package.json
