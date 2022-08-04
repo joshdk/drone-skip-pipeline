@@ -11,7 +11,7 @@ RUN apk add --no-cache \
     ca-certificates
 
 # The builder build stage compiles the Go code into a static binary.
-FROM golang:1.16-alpine as builder
+FROM golang:1.19-alpine as builder
 
 ARG CREATED
 ARG REVISION
@@ -23,7 +23,8 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
     -o /bin/drone-skip-pipeline \
-    -ldflags "-s -w \
+    -buildvcs=false \
+    -ldflags "-buildid= -s -w \
       -X 'jdk.sh/meta.date=$CREATED' \
       -X 'jdk.sh/meta.sha=$REVISION' \
       -X 'jdk.sh/meta.version=$VERSION' \
@@ -32,7 +33,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
     main.go
 
 # The upx build stage uses upx to compress the binary.
-FROM alpine:3.14 as upx
+FROM alpine:3.15 as upx
 
 RUN wget https://github.com/upx/upx/releases/download/v3.96/upx-3.96-amd64_linux.tar.xz \
  && tar -xf upx-3.96-amd64_linux.tar.xz \
