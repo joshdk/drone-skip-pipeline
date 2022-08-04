@@ -72,8 +72,4 @@ COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifica
 COPY README.md /
 COPY --from=upx /bin/drone-skip-pipeline /bin/drone-skip-pipeline
 
-# Switch to a non-root user. Arbitrarily, use the same uid/gid as the "nobody"
-# user from Alpine.
-USER 65534:65534
-
 ENTRYPOINT ["/bin/drone-skip-pipeline"]
