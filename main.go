@@ -96,6 +96,15 @@ func mainCmd() error {
 	// No files were matched by any of the plugin rules. Skip the rest of the
 	// pipeline.
 	if skip {
+		// Touch a sentinel file to signal to subsequent steps that the
+		// pipeline should be skipped.
+		if cfg.Touch != "" {
+			log.Printf("touching file %s", cfg.Touch)
+			if err := touchFile(cfg.Touch); err != nil {
+				return err
+			}
+		}
+
 		return errDroneSkipPipeline
 	}
 
@@ -111,6 +120,7 @@ type config struct {
 	RepoName    string   `envconfig:"DRONE_REPO_NAME"`
 	RepoOwner   string   `envconfig:"DRONE_REPO_OWNER"`
 	Rules       []string `envconfig:"PLUGIN_RULES"`
+	Touch       string   `envconfig:"PLUGIN_TOUCH"`
 }
 
 func loadConfig() (*config, error) {
@@ -134,4 +144,13 @@ func loadConfig() (*config, error) {
 	}
 
 	return &cfg, nil
+}
+
+func touchFile(filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+
+	return file.Close()
 }

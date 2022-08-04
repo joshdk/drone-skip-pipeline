@@ -54,6 +54,20 @@ clone:
   disable: true
 ```
 
+In order to provide some level of feature parity for older versions of DroneCI that do not support pipeline skipping, you can configure the `touch` setting with a filename that will be created in the event that the pipeline should be skipped.
+The existence of file can then be checked for in subsequent steps, where commands can then be skipped where appropriate.
+
+```yaml
+steps:
+- name: debug
+  image: ghcr.io/joshdk/drone-skip-pipeline:v0.1.0
+  settings:
+    rules:
+    - package.json
+    - app/
+    touch: .skip-pipeline
+```
+
 ## License
 
 This code is distributed under the [MIT License][license-link], see [LICENSE.txt][license-file] for more information.
