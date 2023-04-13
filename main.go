@@ -66,11 +66,23 @@ func mainCmd() error {
 
 	client := github.NewClient(httpClient)
 
-	// Get a list of all files (added, deleted, modified) that are a part of
-	// the current pull request.
-	commitFiles, _, err := client.PullRequests.ListFiles(ctx, cfg.RepoOwner, cfg.RepoName, cfg.PullRequest, nil)
-	if err != nil {
-		return err
+	opt := &github.ListOptions{PerPage: 100}
+	var commitFiles []*github.CommitFile
+	for {
+		// Get a list of all files (added, deleted, modified) that are a part of
+		// the current pull request.
+		files, resp, err := client.PullRequests.ListFiles(ctx, cfg.RepoOwner, cfg.RepoName, cfg.PullRequest, opt)
+		if err != nil {
+			return err
+		}
+
+		commitFiles = append(commitFiles, files...)
+
+		// Bail out if there are no more paginated results.
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
 	}
 
 	matcher := ignore.CompileIgnoreLines(cfg.Rules...)
