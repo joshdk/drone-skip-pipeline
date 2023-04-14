@@ -9,8 +9,8 @@
 ## Motivations
 
 This DroneCI plugin enables you skip (or short-circuit) a pipeline based on the files changed as part of the current pull request being built.
-You can avoid running a given pipeline if none of the files involved in that pipeline have changed.
-This plugin also uses the Github API in order to determine the list of files changes, and as such can be used **without** needing a clone step to be run first.
+You can avoid running a given pipeline if none of the files involved in that pipeline were changed.
+This plugin also uses the GitHub API in order to determine the list of files changes, and as such can be used **without** needing a clone step to be run first.
 
 ## Usage
 
@@ -19,7 +19,7 @@ This plugin can be added to your `.drone.yml` as a new step within an existing p
 ```yaml
 steps:
 - name: debug
-  image: ghcr.io/joshdk/drone-skip-pipeline:v0.2.0
+  image: ghcr.io/joshdk/drone-skip-pipeline:v0.2.1
   settings:
     rules:
     - package.json
@@ -31,7 +31,7 @@ If your repository is private, a `GITHUB_TOKEN` environment variable must also b
 ```yaml
 steps:
 - name: drone-skip-pipeline
-  image: ghcr.io/joshdk/drone-skip-pipeline:v0.2.0
+  image: ghcr.io/joshdk/drone-skip-pipeline:v0.2.1
   ...
   environment:
     GITHUB_TOKEN:
@@ -63,7 +63,7 @@ You may also need to configure the `failure` property, in order to ignore the no
 ```yaml
 steps:
 - name: debug
-  image: ghcr.io/joshdk/drone-skip-pipeline:v0.2.0
+  image: ghcr.io/joshdk/drone-skip-pipeline:v0.2.1
   failure: ignore
   settings:
     rules:
