@@ -1,20 +1,23 @@
 module github.com/joshdk/drone-skip-pipeline
 
-go 1.19
+go 1.20
 
 require (
-	github.com/google/go-github/v45 v45.2.0
+	github.com/google/go-github/v51 v51.0.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06
-	golang.org/x/oauth2 v0.0.0-20220722155238-128564f6959c
+	golang.org/x/oauth2 v0.7.0
 	jdk.sh/meta v0.1.1-0.20211021015548-cff3b930ebd9
 )
 
 require (
-	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 // indirect
+	github.com/cloudflare/circl v1.1.0 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
-	golang.org/x/net v0.0.0-20220802222814-0bcc04d9c69b // indirect
+	golang.org/x/crypto v0.7.0 // indirect
+	golang.org/x/net v0.9.0 // indirect
+	golang.org/x/sys v0.7.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
+	google.golang.org/protobuf v1.30.0 // indirect
 )
