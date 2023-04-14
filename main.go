@@ -12,7 +12,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/google/go-github/v45/github"
+	"github.com/google/go-github/v51/github"
 	"github.com/kelseyhightower/envconfig"
 	ignore "github.com/sabhiram/go-gitignore"
 	"golang.org/x/oauth2"
